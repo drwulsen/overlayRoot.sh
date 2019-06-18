@@ -31,3 +31,14 @@ An original error reported on the Raspberry Pi forum, saying it would not boot w
 
 # overlayReboot.sh
 A script to quickly edit (sed) your config.txt for booting with default init or overlayRoot.sh
+It takes two parameters:
+-a (action): reboot / halt
+-m (mode): rw / ro
+
+So to make your system RW and reboot immediately: 
+overlayReboot.sh -a reboot -m rw
+
+And after you're done and maybe want to shut down:
+overlayReboot.sh -a halt -m ro
+
+The next boot is going to be with the overlay again.
