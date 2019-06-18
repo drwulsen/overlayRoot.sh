@@ -28,3 +28,6 @@ So does cmdline.txt
 System running is Gentoo linux.
 
 An original error reported on the Raspberry Pi forum, saying it would not boot wihtout any display connected to HDMI is not happening here.
+
+# overlayReboot.sh
+A script to quickly edit (sed) your config.txt for booting with default init or overlayRoot.sh
