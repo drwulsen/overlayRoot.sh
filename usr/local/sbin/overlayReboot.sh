@@ -1,5 +1,23 @@
 #!/bin/bash
 
+### This script switches between booting the overlayRoot.sh and /sbin/init
+### Its only useful in conjunction with overlayRoot.sh on a Raspberry Pi.
+### Copyright 2019, Walter Hüttenmeyer
+###
+###  This program is free software: you can redistribute it and/or modify
+###     it under the terms of the GNU General Public License as published by
+###     the Free Software Foundation, either version 3 of the License, or
+###     (at your option) any later version.
+### 
+###     This program is distributed in the hope that it will be useful,
+###     but WITHOUT ANY WARRANTY; without even the implied warranty of
+###     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+###     GNU General Public License for more details.
+### 
+###     You should have received a copy of the GNU General Public License
+###     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+
 CMDLINE="/boot/cmdline.txt"
 INIT_DEFAULT="/sbin/init"
 INIT_OVERLAY="/sbin/overlayRoot.sh"
