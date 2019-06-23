@@ -1,57 +1,39 @@
 #!/bin/sh
-#  Read-only Root-FS for Raspian using overlayfs
-#  Version 1.1
-#
-#  Version History:
-#  1.0: initial release
-#  1.1: adopted new fstab style with PARTUUID. the script will now look for a /dev/xyz definiton first 
-#       (old raspbian), if that is not found, it will look for a partition with LABEL=rootfs, if that
-#       is not found it look for a PARTUUID string in fstab for / and convert that to a device name
-#       using the blkid command. 
-#
-#  Created 2017 by Pascal Suter @ DALCO AG, Switzerland to work on Raspian as custom init script
-#  (raspbian does not use an initramfs on boot)
-#
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see
-#    <http://www.gnu.org/licenses/>.
-#
-#
-#  Tested with Raspbian mini, 2018-10-09
-#
-#  This script will mount the root filesystem read-only and overlay it with a temporary tempfs 
-#  which is read-write mounted. This is done using the overlayFS which is part of the linux kernel 
-#  since version 3.18. 
-#  when this script is in use, all changes made to anywhere in the root filesystem mount will be lost 
-#  upon reboot of the system. The SD card will only be accessed as read-only drive, which significantly
-#  helps to prolong its life and prevent filesystem coruption in environments where the system is usually
-#  not shut down properly 
-#
-#  Install: 
-#  copy this script to /sbin/overlayRoot.sh, make it executable and add "init=/sbin/overlayRoot.sh" to the 
-#  cmdline.txt file in the raspbian image's boot partition. 
-#  I strongly recommend to disable swapping before using this. it will work with swap but that just does 
-#  not make sens as the swap file will be stored in the tempfs which again resides in the ram.
-#  run these commands on the booted raspberry pi BEFORE you set the init=/sbin/overlayRoot.sh boot option:
-#  sudo dphys-swapfile swapoff
-#  sudo dphys-swapfile uninstall
-#  sudo update-rc.d dphys-swapfile remove
-#
-#  To install software, run upgrades and do other changes to the raspberry setup, simply remove the init= 
-#  entry from the cmdline.txt file and reboot, make the changes, add the init= entry and reboot once more. 
+### This script will mount the root filesystem read-only and overlay it with a temporary tempfs 
+### which is read-write mounted. This is done using the overlayFS which is part of the linux kernel 
+### since version 3.18. 
+### when this script is in use, all changes made to anywhere in the root filesystem mount will be lost 
+### upon reboot of the system. The SD card will only be accessed as read-only drive, which significantly
+### helps to prolong its life and prevent filesystem coruption in environments where the system is usually
+### not shut down properly 
+###
+### Install: 
+### copy this script to /sbin/overlayRoot.sh, make it executable and add "init=/sbin/overlayRoot.sh" to the 
+### cmdline.txt file in the raspbian image's boot partition. 
+### I strongly recommend to disable swapping before using this.
+### To install software, run upgrades and do other changes to the raspberry setup, simply remove the init= 
+### entry from the cmdline.txt file and reboot, make the changes, add the init= entry and reboot once more. 
+### This can be done by my overlayReboot.sh script, which makes the process quick and easy to do.
+###
+### Copyright 2017 by Pascal Suter @ DALCO AG, Switzerland
+### Copyright 2019, Walter Hüttenmeyer
+###  This program is free software: you can redistribute it and/or modify
+###     it under the terms of the GNU General Public License as published by
+###     the Free Software Foundation, either version 3 of the License, or
+###     (at your option) any later version.
+### 
+###     This program is distributed in the hope that it will be useful,
+###     but WITHOUT ANY WARRANTY; without even the implied warranty of
+###     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+###     GNU General Public License for more details.
+### 
+###     You should have received a copy of the GNU General Public License
+###     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###
+
 
 # give us some debugging, if needed. Set to anything but 0
-DEBUG=1
+DEBUG=0
 
 #check for exit status and print error messages, plus exit to /bin/bash
 checkfail(){
