@@ -1,4 +1,5 @@
 #!/bin/sh
+
 ### This script will mount the root filesystem read-only and overlay it with a temporary tempfs 
 ### which is read-write mounted. This is done using the overlayFS which is part of the linux kernel 
 ### since version 3.18. 
